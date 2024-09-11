@@ -88,6 +88,8 @@ struct HTTPSetCookie {
                     return nil
                 }
                 self.value.sameSite = HTTPCookies.SameSitePolicy(rawValue: .init(parameter))
+            case "partitioned":
+                self.value.partitioned = true
             default:
                 return nil
             }
@@ -144,6 +146,11 @@ public struct HTTPCookies: ExpressibleByDictionaryLiteral, Sendable {
         /// This restriction mitigates attacks such as cross-site request forgery (XSRF).
         public var sameSite: SameSitePolicy?
         
+        /// Cookies Having Independent Partitioned State (CHIPS, also known as Partitioned cookies) allows developers to opt a cookie into partitioned storage, with a separate cookie jar per top-level site.
+        /// Note: Partitioned cookies must be set with Secure.
+        /// In addition, you can use the __Host prefix when setting partitioned cookies to bind them only to the current domain or subdomain, and this is recommended if you don't need to share cookies between subdomains.
+        public var partitioned: Bool
+        
         // MARK: Init
         
         /// Creates a new `HTTPCookieValue`.
@@ -159,6 +166,7 @@ public struct HTTPCookies: ExpressibleByDictionaryLiteral, Sendable {
         ///     - isSecure: Limits the cookie to secure connections. If `sameSite` is `none`, this flag will be overridden with `true`. Defaults to `false`.
         ///     - isHTTPOnly: Does not expose the cookie over non-HTTP channels. Defaults to `false`.
         ///     - sameSite: See `HTTPSameSitePolicy`. Defaults to `lax`.
+        ///     - partitioned: Separate cookie jar per top-level site.
         public init(
             string: String,
             expires: Date? = nil,
@@ -167,7 +175,8 @@ public struct HTTPCookies: ExpressibleByDictionaryLiteral, Sendable {
             path: String? = "/",
             isSecure: Bool = false,
             isHTTPOnly: Bool = false,
-            sameSite: SameSitePolicy? = .lax
+            sameSite: SameSitePolicy? = .lax,
+            partitioned: Bool = false
         ) {
             self.string = string
             self.expires = expires
@@ -180,6 +189,7 @@ public struct HTTPCookies: ExpressibleByDictionaryLiteral, Sendable {
             self.isSecure = isSecure || forceSecure
             self.isHTTPOnly = isHTTPOnly
             self.sameSite = sameSite
+            self.partitioned = partitioned
         }
         
         /// See `ExpressibleByStringLiteral`.
@@ -227,6 +237,10 @@ public struct HTTPCookies: ExpressibleByDictionaryLiteral, Sendable {
                 case .none:
                     serialized += "=None"
                 }
+            }
+            
+            if self.partitioned {
+                serialized += "; Partitioned"
             }
             
             return serialized
