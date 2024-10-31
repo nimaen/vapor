@@ -277,6 +277,8 @@ public extension HTTPMediaType {
     static let tiff = HTTPMediaType(type: "image", subType: "tiff")
     /// WebP image.
     static let webp = HTTPMediaType(type: "image", subType: "webp")
+    /// WebP image.
+    static let heic = HTTPMediaType(type: "image", subType: "heic")
     /// Basic audio.
     static let audio = HTTPMediaType(type: "audio", subType: "basic")
     /// MIDI audio.
@@ -719,6 +721,8 @@ let fileExtensionMediaTypeMapping: [String: HTTPMediaType] = [
     "xbm": HTTPMediaType(type: "image", subType: "x-xbitmap"),
     "xpm": HTTPMediaType(type: "image", subType: "x-xpixmap"),
     "xwd": HTTPMediaType(type: "image", subType: "x-xwindowdump"),
+    "heic": HTTPMediaType(type: "image", subType: "heic"),
+    "heif": HTTPMediaType(type: "image", subType: "heic"),
     "eml": HTTPMediaType(type: "message", subType: "rfc822"),
     "igs": HTTPMediaType(type: "model", subType: "iges"),
     "iges": HTTPMediaType(type: "model", subType: "iges"),
@@ -924,6 +928,7 @@ extension HTTPMediaTypeSet {
         HTTPMediaType(type: "image", subType: "x-xbitmap"),
         HTTPMediaType(type: "image", subType: "x-xpixmap"),
         HTTPMediaType(type: "image", subType: "x-xwindowdump"),
+        HTTPMediaType(type: "image", subType: "heic"),
         HTTPMediaType(type: "video", subType: "*"),
     ]
 }
