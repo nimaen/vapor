@@ -430,7 +430,12 @@ private final class HTTPServerConnection: Sendable {
             }
             
             /// Set the handlers that are applied to the accepted Channels.
-            .childChannelInitializer { [unowned application, unowned server] channel in
+            .childChannelInitializer { [weak application, weak server] channel in
+                // On restart, we do not want to crash because of an unowned ref.
+                guard let application, let server else {
+                    return channel.close(mode: .all)
+                }
+                
                 /// Copy the most up-to-date configuration.
                 let configuration = server.configuration
 
